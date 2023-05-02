@@ -1,85 +1,76 @@
+import { MultiPointRecord } from '@shpts/geometry/multipoint';
 import { ShpNullGeom } from '@shpts/geometry/null';
-import { GeomUtil, ShapeType, ShpGeometry } from '@shpts/types/geometry';
-import { BoundingBox, GeomHeader, PartsInfo, ShpHeader } from '@shpts/types/types';
+import { PointRecord } from '@shpts/geometry/point';
+import { PolygonRecord } from '@shpts/geometry/polygon';
+import { PolyLineRecord } from '@shpts/geometry/polyline';
+import { GeomUtil, ShapeType } from '@shpts/utils/geometry';
+import { BoundingBox, GeomHeader, PartsInfo, ShpHeader } from '@shpts/types/data';
 import { MemoryStream } from '@shpts/utils/stream';
 
 export class ShapeReader {
-    private _shxStream: MemoryStream;
-    private _shpStream: MemoryStream;
-    private _shxHeader: ShpHeader;
-    private _shpHeader: ShpHeader;
+    private shxStream_: MemoryStream;
+    private shpStream_: MemoryStream;
+    private shxHeader_: ShpHeader;
+    private shpHeader_: ShpHeader;
 
     readonly recordCount: number = 0;
-
     readonly hasZ: boolean;
-
     readonly hasM: boolean;
 
-    public get extent(): BoundingBox {
-        return this._shpHeader!.extent;
+    get extent(): BoundingBox {
+        return this.shpHeader_.extent;
     }
 
-    public get shapeType(): ShapeType {
-        return this._shpHeader!.type;
+    get shapeType(): ShapeType {
+        return this.shpHeader_.type;
     }
 
-    public get shpHeader(): ShpHeader {
-        return this._shpHeader!;
+    get shpHeader(): ShpHeader {
+        return this.shpHeader_;
+    }
+
+    get shpStream() {
+        return this.shpStream_;
+    }
+
+    get shxStream() {
+        return this.shxStream_;
     }
 
     private constructor(shp: ArrayBuffer, shx: ArrayBuffer) {
-        this._shpStream = new MemoryStream(shp);
-        this._shpHeader = this._readHeader(this._shpStream);
-        this._shxStream = new MemoryStream(shx);
-        this._shxHeader = this._readHeader(this._shxStream);
-        if (this._shpHeader.type !== this._shxHeader.type) {
+        this.shpStream_ = new MemoryStream(shp);
+        this.shpHeader_ = this.readHeader(this.shpStream_);
+        this.shxStream_ = new MemoryStream(shx);
+        this.shxHeader_ = this.readHeader(this.shxStream_);
+
+        if (this.shpHeader_.type !== this.shxHeader_.type)
             throw new Error('SHP / SHX shapetype mismatch');
-        }
-        this.recordCount = (this._shxHeader.fileLength - 100) / 8;
-        this.hasZ = GeomUtil.hasZ(this._shpHeader.type);
-        this.hasM = GeomUtil.hasM(this._shpHeader.type);
+
+        this.recordCount = (this.shxHeader_.fileLength - 100) / 8;
+        this.hasZ = GeomUtil.hasZ(this.shpHeader.type);
+        this.hasM = GeomUtil.hasM(this.shpHeader.type);
     }
 
-    public static async fromFile(shp: File, shx: File): Promise<ShapeReader> {
-        if (shp == null) {
-            throw new Error('No .shp file provided');
-        }
-        if (shx == null) {
-            throw new Error('No .shx file provided');
-        }
-        let shpBytes: ArrayBuffer;
-        let shxBytes: ArrayBuffer;
-        try {
-            shpBytes = await shp.arrayBuffer();
-        } catch (err: any) {
-            throw new Error(`Failed to open .shp: ${err.message}`);
-        }
-        try {
-            shxBytes = await shx.arrayBuffer();
-        } catch (err: any) {
-            throw new Error(`Failed to open .shp: ${err.message}`);
-        }
+    static async fromFile(shp: File, shx: File) {
+        const shpBytes = await shp.arrayBuffer();
+        const shxBytes = await shx.arrayBuffer();
         return this.fromArrayBuffer(shpBytes, shxBytes);
     }
 
-    public static async fromArrayBuffer(
-        shpBytes: ArrayBuffer,
-        shxBytes: ArrayBuffer
-    ): Promise<ShapeReader> {
+    static async fromArrayBuffer(shpBytes: ArrayBuffer, shxBytes: ArrayBuffer) {
         return new ShapeReader(shpBytes, shxBytes);
     }
 
-    /* Used for both .shp and .shx */
-    private _readHeader(stream: MemoryStream): ShpHeader {
-        const version = stream.seek(0).readInt32();
-        if (version !== 9994) {
-            throw new Error('Unexpected Shape version');
+    private readHeader(stream: MemoryStream): ShpHeader {
+        const fileCode = stream.seek(0).readInt32();
+        if (fileCode !== 9994) {
+            throw new Error(`Unexpected Shape fileCode: ${fileCode}`);
         }
 
         const fileLen = stream.seek(24).readInt32();
         const shpType = stream.seek(32).readInt32(true);
         stream.seek(36);
-        const extent = this._readBbox(stream);
+        const extent = this.readBbox(stream);
         const result = {
             type: shpType as ShapeType,
             fileLength: fileLen * 2,
@@ -88,10 +79,10 @@ export class ShapeReader {
         return result;
     }
 
-    private _readGeomHeader(): GeomHeader {
-        const recNum = this._shpStream.readInt32(false);
-        const len = this._shpStream.readInt32(false);
-        const type: ShapeType = this._shpStream.readInt32(true) as ShapeType;
+    private readGeomHeader(): GeomHeader {
+        const recNum = this.shpStream_.readInt32(false);
+        const len = this.shpStream_.readInt32(false);
+        const type: ShapeType = this.shpStream_.readInt32(true) as ShapeType;
         return {
             length: len,
             recordNum: recNum,
@@ -99,7 +90,7 @@ export class ShapeReader {
         };
     }
 
-    private _readBbox(stream: MemoryStream): BoundingBox {
+    private readBbox(stream: MemoryStream): BoundingBox {
         const xMin = stream.readDouble(true);
         const yMin = stream.readDouble(true);
         const xMax = stream.readDouble(true);
@@ -112,75 +103,78 @@ export class ShapeReader {
         };
     }
 
-    private _getShpIndex(index: number): number {
+    private getShpIndex(index: number): number {
         const offs = index * 8 + 100;
-        const shpOffset = this._shxStream.seek(offs).readInt32(false) * 2;
+        const shpOffset = this.shxStream_.seek(offs).readInt32(false) * 2;
         return shpOffset;
     }
 
-    public readGeom(geomIndex: number) {
-        const offset = this._getShpIndex(geomIndex);
-        this._shpStream.seek(offset);
-        const recHead = this._readGeomHeader();
+    readGeom(geomIndex: number) {
+        const offset = this.getShpIndex(geomIndex);
+        this.shpStream_.seek(offset);
+        const recHead = this.readGeomHeader();
 
-        if (this._shpHeader.type !== recHead.type) {
-            if (recHead.type === ShapeType.Null) {
-                return new ShpNullGeom(recHead.type);
-            }
-            throw new Error(
-                `Unexpected shape type ${GeomUtil.shapeTypeStr(recHead.type)}(${
-                    recHead.type as number
-                }), expected ${GeomUtil.shapeTypeStr(this._shpHeader.type)}`
-            );
-        }
+        this.checkForNull(recHead);
+
         switch (recHead.type) {
+            case ShapeType.Null:
+                return new ShpNullGeom();
+
             case ShapeType.Point:
             case ShapeType.PointZ:
             case ShapeType.PointM:
-                return this._readPoint(recHead);
+                return this.readPoint(recHead);
 
             case ShapeType.MultiPoint:
             case ShapeType.MultiPointZ:
             case ShapeType.MultiPointM:
-                return this._readMultiPoint(recHead);
+                return this.readMultiPoint(recHead);
 
             case ShapeType.PolyLine:
             case ShapeType.PolyLineZ:
             case ShapeType.PolyLineM:
-                return this._readPolyLine(recHead);
+                return this.readPolyLine(recHead);
 
             case ShapeType.Polygon:
             case ShapeType.PolygonZ:
             case ShapeType.PolygonM:
-                return this._readPolygon(recHead);
+                return this.readPolygon(recHead);
 
             case ShapeType.MultiPatch:
-                return this._readMultiPatch(recHead);
+                return this.readMultiPatch(recHead);
         }
+
         throw new Error('Unsupported geometry');
     }
 
-    private _readPoint(header: GeomHeader) {
-        //TODO
-        return header;
+    private checkForNull(recHead: GeomHeader) {
+        if (this.shpHeader.type !== recHead.type) {
+            if (recHead.type !== ShapeType.Null)
+                throw new Error(
+                    `Unexpected shape type ${GeomUtil.shapeTypeStr(recHead.type)}(${
+                        recHead.type as number
+                    }), expected ${GeomUtil.shapeTypeStr(this.shpHeader.type)}`
+                );
+        }
     }
 
-    private _readMultiPoint(header: GeomHeader) {
-        //TODO
-        return header;
+    private readPoint(header: GeomHeader) {
+        return PointRecord.fromPresetReader(this, header);
     }
 
-    private _readPolyLine(header: GeomHeader) {
-        //TODO
-        return header;
+    private readMultiPoint(header: GeomHeader) {
+        return MultiPointRecord.fromPresetReader(this, header);
     }
 
-    private _readPolygon(header: GeomHeader) {
-        //TODO
-        return header;
+    private readPolyLine(header: GeomHeader) {
+        return PolyLineRecord.fromPresetReader(this, header);
     }
 
-    private _readMultiPatch(header: GeomHeader) {
+    private readPolygon(header: GeomHeader) {
+        return PolygonRecord.fromPresetReader(this, header);
+    }
+
+    private readMultiPatch(header: GeomHeader) {
         //TODO
         return header;
     }

@@ -1,5 +1,5 @@
-import { CoordType } from './coordinate';
-import { GeoJsonGeom } from './geojson';
+import { CoordType } from '../types/coordinate';
+import { GeoJsonGeom } from '../types/geojson';
 
 /* eslint-disable  no-unused-vars */
 export enum ShapeType {
@@ -21,7 +21,7 @@ export enum ShapeType {
 /* eslint-enable  no-unused-vars */
 
 export class GeomUtil {
-    public static pointType(shapeType: ShapeType): CoordType {
+    static coordType(shapeType: ShapeType): CoordType {
         if (shapeType === 0) {
             return CoordType.NULL;
         } else if (shapeType < 10) {
@@ -36,46 +36,22 @@ export class GeomUtil {
         return CoordType.NULL;
     }
 
-    public static hasZ(shapeType: ShapeType): boolean {
-        const type = GeomUtil.pointType(shapeType);
+    static hasZ(shapeType: ShapeType): boolean {
+        const type = GeomUtil.coordType(shapeType);
         return type === CoordType.XYZM;
     }
 
-    public static hasM(shapeType: ShapeType): boolean {
-        const type = GeomUtil.pointType(shapeType);
+    static hasM(shapeType: ShapeType): boolean {
+        const type = GeomUtil.coordType(shapeType);
         return type === CoordType.XYZM || type === CoordType.XYM;
     }
 
-    public static shapeTypeStr(shapeType: ShapeType): string {
+    static shapeTypeStr(shapeType: ShapeType): string {
         if (shapeType in ShapeType) {
             return ShapeType[shapeType];
         }
         return 'Unknown';
     }
-}
-
-export interface ShpGeometry {
-    type: ShapeType;
-    toGeoJson(): GeoJsonGeom;
-    readonly hasZ: boolean;
-    readonly hasM: boolean;
-}
-
-export abstract class ShpGeometryBase implements ShpGeometry {
-    public readonly type: ShapeType;
-
-    readonly hasZ: boolean;
-
-    readonly hasM: boolean;
-
-    constructor(type: ShapeType) {
-        this.type = type;
-        const pointType = GeomUtil.pointType(this.type);
-        this.hasZ = pointType === CoordType.XYZM;
-        this.hasM = pointType === CoordType.XYZM || pointType === CoordType.XYM;
-    }
-
-    public abstract toGeoJson(): GeoJsonGeom;
 }
 
 // According to Shape spec, M values less than this is NaN
