@@ -53,6 +53,3 @@ export class GeomUtil {
         return 'Unknown';
     }
 }
-
-// According to Shape spec, M values less than this is NaN
-export const mNaN = -Math.pow(-10, 38);

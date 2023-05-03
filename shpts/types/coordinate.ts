@@ -15,3 +15,4 @@ export type MultiPointCoord = Coord[];
 export type PolyLineCoord = Coord[][];
 export type Ring = Coord[];
 export type PolygonCoord = Coord[][][];
+export type MultiPatchCoord = Coord[][][];

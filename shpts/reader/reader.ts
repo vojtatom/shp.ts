@@ -6,6 +6,7 @@ import { PolyLineRecord } from '@shpts/geometry/polyline';
 import { GeomUtil, ShapeType } from '@shpts/utils/geometry';
 import { BoundingBox, GeomHeader, PartsInfo, ShpHeader } from '@shpts/types/data';
 import { MemoryStream } from '@shpts/utils/stream';
+import { MultiPatchRecord } from '@shpts/geometry/multipatch';
 
 export class ShapeReader {
     private shxStream_: MemoryStream;
@@ -62,12 +63,13 @@ export class ShapeReader {
     }
 
     private readHeader(stream: MemoryStream): ShpHeader {
-        const fileCode = stream.seek(0).readInt32();
+        const fileCode = stream.seek(0).readInt32(false);
+
         if (fileCode !== 9994) {
             throw new Error(`Unexpected Shape fileCode: ${fileCode}`);
         }
 
-        const fileLen = stream.seek(24).readInt32();
+        const fileLen = stream.seek(24).readInt32(false);
         const shpType = stream.seek(32).readInt32(true);
         stream.seek(36);
         const extent = this.readBbox(stream);
@@ -175,7 +177,6 @@ export class ShapeReader {
     }
 
     private readMultiPatch(header: GeomHeader) {
-        //TODO
-        return header;
+        return MultiPatchRecord.fromPresetReader(this, header);
     }
 }

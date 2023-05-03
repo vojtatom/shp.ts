@@ -59,7 +59,7 @@ export abstract class BaseRingedRecord extends BaseRecord {
         for (let i = 0; i < parts.length; ++i) {
             const line: Coord[] = [];
             const start = parts[i];
-            const end = parts[i + 1] || xy.length;
+            const end = parts[i + 1] || xy.length / 2;
             for (let j = start; j < end; j++) {
                 const coord = [];
                 coord.push(xy[j * 2]);

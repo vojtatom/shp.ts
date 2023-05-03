@@ -1,4 +1,6 @@
-import { Coord, Ring } from '@shpts/types/coordinate';
+import { Coord, PolygonCoord, Ring } from '@shpts/types/coordinate';
+
+//TODO first and last points are the same, is it in the code?
 
 export function isClockwise(ring: Ring) {
     if (ring.length < 3) return false; //is hole if degenerate ring
@@ -30,4 +32,33 @@ export function isRingInRing(ringOutside: Ring, ringInside: Ring) {
         if (!containsPoint(ringOutside, ringInside[i])) return false;
     }
     return true;
+}
+
+export function assemblePolygonsWithHoles(coords: Coord[][]) {
+    const clockwiseRings: Coord[][] = [];
+    const unusedHoldes: Coord[][] = [];
+
+    for (const ring of coords) {
+        if (isClockwise(ring)) clockwiseRings.push(ring);
+        else unusedHoldes.push(ring);
+    }
+
+    const polygons: PolygonCoord = [];
+    for (const clockwiseRing of clockwiseRings) {
+        const polygon = [clockwiseRing];
+        for (let i = unusedHoldes.length - 1; i >= 0; i--) {
+            if (isRingInRing(clockwiseRing, unusedHoldes[i])) {
+                polygon.push(unusedHoldes[i]);
+                unusedHoldes.splice(i, 1);
+            }
+        }
+        polygons.push(polygon);
+    }
+
+    if (unusedHoldes.length) {
+        console.warn('Some holes are not in any polygon, inserting as individual polygons.');
+        polygons.push(...unusedHoldes.map((ring) => [ring]));
+    }
+
+    return polygons;
 }
