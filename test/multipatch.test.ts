@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest';
-import { ShapeReader } from '@shpts/reader/reader';
+import { ShapeReader } from '@shpts/reader/shpReader';
 import { expectGeometry, expectPointsEqual, expectRing, openFileAsArray } from './utils';
 import { MultiPatchRecord } from '@shpts/geometry/multipatch';
 import { CoordType, Coord } from '@shpts/types/coordinate';

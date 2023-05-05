@@ -1,4 +1,4 @@
-import { ShapeReader } from '@shpts/reader/reader';
+import { ShapeReader } from '@shpts/reader/shpReader';
 import { Coord, CoordType } from '@shpts/types/coordinate';
 import fs from 'fs';
 import { expect } from 'vitest';

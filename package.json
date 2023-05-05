@@ -1,11 +1,11 @@
 {
     "name": "shpts",
     "private": false,
-    "version": "0.0.1",
+    "version": "1.0.0",
     "type": "module",
     "repository": {
         "type": "git",
-        "url": "https://github.com/vojtatom/shp-ts"
+        "url": "https://github.com/vojtatom/shpts"
     },
     "keywords": [
         "metacity",
@@ -40,6 +40,7 @@
     },
     "dependencies": {
         "gl-matrix": "^3.4.3",
+        "iconv-lite": "^0.6.3",
         "vite-plugin-dts": "^2.0.0-beta.3"
     },
     "devDependencies": {

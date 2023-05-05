@@ -6,7 +6,7 @@ import {
     GeoJsonMultiPolygon,
     GeoJsonPolygon,
 } from '@shpts/types/geojson';
-import { ShapeReader } from '@shpts/reader/reader';
+import { ShapeReader } from '@shpts/reader/shpReader';
 import { GeomHeader } from '@shpts/types/data';
 import { assemblePolygonsWithHoles } from '@shpts/utils/orientation';
 import { GeomUtil } from '@shpts/utils/geometry';
