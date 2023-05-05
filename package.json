@@ -24,7 +24,7 @@
     ],
     "main": "./dist/shpts.umd.js",
     "module": "./dist/shpts.js",
-    "types": "./dist/shpts/shpts.d.ts",
+    "types": "./dist/shpts.d.ts",
     "exports": {
         ".": {
             "import": "./dist/shpts.js",

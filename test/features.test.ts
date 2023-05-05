@@ -1,7 +1,6 @@
 import { expect, test } from 'vitest';
 import { expectPointsEqual, openFileAsArray } from './utils';
-import { FeatureReader } from '@shpts/reader/featureReader';
-import { PolyLineRecord } from '@shpts/geometry/polyline';
+import { FeatureReader, PolyLineRecord } from '@shpts/shpts';
 
 test('Read feature OK', async () => {
     const shp = openFileAsArray('testdata/featureclass.shp');

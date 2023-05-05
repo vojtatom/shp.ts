@@ -1,8 +1,6 @@
 import { expect, test } from 'vitest';
-import { ShapeReader } from '@shpts/reader/shpReader';
 import { expectGeometry, expectPointsEqual, openFileAsArray } from './utils';
-import { MultiPointRecord } from '@shpts/geometry/multipoint';
-import { CoordType } from '@shpts/types/coordinate';
+import { ShapeReader, MultiPointRecord, CoordType } from '@shpts/shpts';
 
 test('Reading PointRecord', async () => {
     const shpBuffer = openFileAsArray('testdata/multipoint.shp');

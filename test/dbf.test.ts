@@ -1,7 +1,6 @@
-import { DbfFieldDescr, DbfFieldType } from '@shpts/types/dbfTypes';
+import { DbfFieldDescr, DbfFieldType, DbfReader } from '@shpts/shpts';
 import { expect, test } from 'vitest';
 import { openFileAsArray } from './utils';
-import { DbfReader } from '@shpts/reader/dbfReader';
 
 function expectField(
     field: DbfFieldDescr,
