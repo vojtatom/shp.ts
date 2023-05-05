@@ -9,7 +9,7 @@ import {
 } from '@shpts/types/geojson';
 import { GeomUtil } from '@shpts/utils/geometry';
 import { GeomHeader } from '@shpts/types/data';
-import { assemblePolygonsWithHoles, isClockwise, isRingInRing } from '@shpts/utils/orientation';
+import { assemblePolygonsWithHoles } from '@shpts/utils/orientation';
 
 export class PolygonRecord extends BaseRingedRecord {
     constructor(public coords: PolygonCoord, coordType: CoordType) {

@@ -50,3 +50,22 @@ export function expectGeometry<TRecord>(
     expect(geom instanceof type).toBe(true);
     return geom as TRecord;
 }
+
+interface TestCoords {
+    x: number;
+    y: number;
+    m?: number;
+    z?: number;
+}
+
+export function expectRing(ring: Coord[], values: TestCoords[]) {
+    expect(ring.length).toBe(values.length);
+    for (let i = 0; i < values.length; i++) {
+        let coord = ring[i];
+        let value = values[i];
+        const point: Coord = [value.x, value.y];
+        if (value.z !== undefined) point.push(value.z);
+        if (value.m !== undefined) point.push(value.m);
+        expectPointsEqual(coord, point);
+    }
+}

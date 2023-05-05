@@ -1,27 +1,8 @@
 import { expect, test } from 'vitest';
 import { ShapeReader } from '@shpts/reader/reader';
-import { expectGeometry, expectPointsEqual, openFileAsArray } from './utils';
+import { expectGeometry, expectRing, openFileAsArray } from './utils';
 import { PolygonRecord } from '@shpts/geometry/polygon';
-import { CoordType, Coord } from '@shpts/types/coordinate';
-
-interface TestCoords {
-    x: number;
-    y: number;
-    m?: number;
-    z?: number;
-}
-
-function expectRing(ring: Coord[], values: TestCoords[]) {
-    expect(ring.length).toBe(values.length);
-    for (let i = 0; i < values.length; i++) {
-        let coord = ring[i];
-        let value = values[i];
-        const point: Coord = [value.x, value.y];
-        if (value.z !== undefined) point.push(value.z);
-        if (value.m !== undefined) point.push(value.m);
-        expectPointsEqual(coord, point);
-    }
-}
+import { CoordType } from '@shpts/types/coordinate';
 
 test('Reading PolygonRecord', async () => {
     const shpBuffer = openFileAsArray('testdata/polygon.shp');
@@ -123,146 +104,142 @@ test('Reading PolygonRecord', async () => {
     ]);
 });
 
-/*
-describe('PolygonM', () => {
-    it('', async () => {
-      const reader = await createAndVerifyReader('polygonM.shp', 'polygonM.shx', ShapeType.PolygonM, 2);
-      for (let i = 0; i < reader.recordCount; i++) {
-        const geom = reader.readGeom(i) as ShpPolygon;
-        switch (i) {
-          case 0:
-            // Single poly, no holes
-            assert.equal(geom.parts.length, 1);
-            assert.equal(geom.parts[0].interiorRings.length, 0);
-            assertCoordsXYM(geom.parts[0].exteriorRing.coords, [
-              { x: -70, y: -115, m: 40 },
-              { x: -44, y: -115, m: 50 },
-              { x: -56, y: -132, m: 60 },
-              { x: -70, y: -115, m: 40 }
-            ]);
-            break;
+test('Reading PolygonRecord with M', async () => {
+    const shpBuffer = openFileAsArray('testdata/polygonM.shp');
+    const shxBuffer = openFileAsArray('testdata/polygonM.shx');
 
-          case 1:
-            // Multipoly with 3 islands, last one with 3 holes
-            assert.equal(geom.parts.length, 3);
-            assert.equal(geom.parts[0].interiorRings.length, 0);
-            assert.equal(geom.parts[1].interiorRings.length, 0);
-            assert.equal(geom.parts[2].interiorRings.length, 3);
-            assertCoordsXYM(geom.parts[0].exteriorRing.coords, [
-              { x: 34.44082552002709, y: -157.7606773230082, m: 5 },
-              { x: 23.31626238756462, y: -165.56738829315734, m: 6 },
-              { x: 20.97424909651994, y: -153.27181851517253, m: 7 },
-              { x: 34.44082552002709, y: -157.7606773230082, m: 5 }
-            ]);
+    const reader = await ShapeReader.fromArrayBuffer(shpBuffer, shxBuffer);
 
-            assertCoordsXYM(geom.parts[1].exteriorRing.coords, [
-              { x: 4, y: -153, m: 1 },
-              { x: 2, y: -170, m: 2 },
-              { x: -22, y: -168, m: 3 },
-              { x: -27, y: -153, m: 4 },
-              { x: 4, y: -153, m: 1 }
-            ]);
+    expect(reader.recordCount).toBe(2);
 
-            assertCoordsXYM(geom.parts[2].exteriorRing.coords, [
-              { x: 21.36458464502732, y: -114.82376698718815, m: 8 },
-              { x: 23.511430161818396, y: -145.4651075450234, m: 9 },
-              { x: -33.47755992027015, y: -143.1230942539787, m: 10 },
-              { x: -29.76937220944933, y: -116.18994140696418, m: 11 },
-              { x: 21.36458464502732, y: -114.82376698718815, m: 8 }
-            ]);
-            assertCoordsXYM(geom.parts[2].interiorRings[0].coords, [
-              { x: -11.033265881091495, y: -120.87396798905371, m: 12 },
-              { x: -12.5946080751213, y: -130.24202115323266, m: 13 },
-              { x: 0.4816327998785255, y: -133.75504108979976, m: 14 },
-              { x: 0.8719683483859058, y: -121.8498068603223, m: 15 },
-              { x: -10.83809810683772, y: -120.87396798905371, m: 16 },
-              { x: -11.033265881091495, y: -120.87396798905371, m: 12 }
-            ]);
-            assertCoordsXYM(geom.parts[2].interiorRings[1].coords, [
-              { x: 8.953915923251884, y: -129.89172001995667, m: NaN },
-              { x: 4.580156059206786, y: -138.82940322039667, m: NaN },
-              { x: 15.314383643161705, y: -138.82940322039667, m: NaN },
-              { x: 9.264182641296316, y: -130.04685337897888, m: NaN },
-              { x: 8.953915923251884, y: -129.89172001995667, m: NaN }
-            ]);
-            assertCoordsXYM(geom.parts[2].interiorRings[2].coords, [
-              { x: -10.057427009822845, y: -140.1955776401727, m: 33 },
-              { x: -15.131789140419755, y: -131.4130277987549, m: 44 },
-              { x: -25.67084895012107, y: -123.60631682860594, m: 55 },
-              { x: -28.98870111243434, y: -138.43906767188923, m: 66 },
-              { x: -10.057427009822845, y: -140.1955776401727, m: 33 }
-            ]);
+    let geom = expectGeometry(reader, 0, CoordType.XYM, PolygonRecord);
+    expect(geom.coords.length).toBe(1);
+    let polygon = geom.coords[0];
+    expect(polygon.length).toBe(1);
+    expectRing(polygon[0], [
+        { x: -70, y: -115, m: 40 },
+        { x: -44, y: -115, m: 50 },
+        { x: -56, y: -132, m: 60 },
+        { x: -70, y: -115, m: 40 },
+    ]);
 
-            break;
-        }
-      }
-    });
-  });
+    geom = expectGeometry(reader, 1, CoordType.XYM, PolygonRecord);
+    expect(geom.coords.length).toBe(3);
 
-  describe('PolygonZ', () => {
-    it('', async () => {
-      const reader = await createAndVerifyReader('polygonZM.shp', 'polygonZM.shx', ShapeType.PolygonZ, 2);
-      for (let i = 0; i < reader.recordCount; i++) {
-        const geom = reader.readGeom(i) as ShpPolygon;
-        switch (i) {
-          case 0:
-            // simple polygon, no holes
-            assert.equal(geom.parts.length, 1);
-            assert.equal(geom.parts[0].interiorRings.length, 0);
-            assertCoordsXYZM(geom.parts[0].exteriorRing.coords, [
-              { x: 32, y: -86, z: 10, m: 1 },
-              { x: 46, y: -86, z: 20, m: NaN },
-              { x: 50, y: -100, z: 30, m: 2 },
-              { x: 33, y: -101, z: 0, m: NaN },
-              { x: 32, y: -86, z: 10, m: 1 }
-            ]);
-            break;
-          case 1:
-            assert.equal(geom.parts.length, 3);
-            assert.equal(geom.parts[0].interiorRings.length, 3);
-            assert.equal(geom.parts[1].interiorRings.length, 0);
-            assert.equal(geom.parts[2].interiorRings.length, 0);
+    polygon = geom.coords[0];
+    expect(polygon.length).toBe(1);
+    expectRing(polygon[0], [
+        { x: 34.44082552002709, y: -157.7606773230082, m: 5 },
+        { x: 23.31626238756462, y: -165.56738829315734, m: 6 },
+        { x: 20.97424909651994, y: -153.27181851517253, m: 7 },
+        { x: 34.44082552002709, y: -157.7606773230082, m: 5 },
+    ]);
 
-            // Polygon 1 exterior
-            assertCoordsXYZM(geom.parts[0].exteriorRing.coords, [
-              { x: 84, y: -108, z: 0, m: 5 },
-              { x: 86, y: -124, z: 0, m: 6 },
-              { x: 72, y: -130, z: 0, m: 7 },
-              { x: 61, y: -120, z: 0, m: 8 },
-              { x: 67, y: -108, z: 0, m: 9 },
-              { x: 84, y: -108, z: 0, m: 5 }
-            ]);
-            assertCoordsXYZM(geom.parts[0].interiorRings[0].coords, [
-              { x: 66.83518332201072, y: -116.61642294039177, z: 0, m: NaN },
-              { x: 72.99209448485459, y: -118.9252646264581, z: 0, m: NaN },
-              { x: 69.42388460638824, y: -111.64891507037015, z: 0, m: NaN },
-              { x: 66.83518332201072, y: -116.61642294039177, z: 0, m: NaN }
-            ]);
-            assertCoordsXYZM(geom.parts[0].interiorRings[1].coords, [
-              { x: 75.51083086965417, y: -111.78884486952569, z: 0, m: NaN },
-              { x: 76.70023416247636, y: -118.43551032941377, z: 0, m: NaN },
-              { x: 82.78718042574235, y: -117.80582623321385, z: 0, m: NaN },
-              { x: 81.17798773545354, y: -111.71887996994786, z: 0, m: NaN },
-              { x: 75.51083086965417, y: -111.78884486952569, z: 0, m: NaN }
-            ]);
-            assertCoordsXYZM(geom.parts[0].interiorRings[2].coords, [
-              { x: 73.2019891835879, y: -126.20161418254617, z: 0, m: NaN },
-              { x: 75.23097127134315, y: -126.34154398170176, z: 0, m: NaN },
-              { x: 77.18998845952069, y: -125.64189498592401, z: 0, m: NaN },
-              { x: 78.37939175234271, y: -124.66238639183524, z: 0, m: NaN },
-              { x: 78.51932155149831, y: -122.5634394045021, z: 0, m: NaN },
-              { x: 77.0500586603651, y: -120.81431691505787, z: 0, m: NaN },
-              { x: 74.3214275768322, y: -120.04470301970241, z: 0, m: NaN },
-              { x: 71.52283159372138, y: -120.60442221632462, z: 0, m: NaN },
-              { x: 70.40339320047707, y: -121.79382550914664, z: 0, m: NaN },
-              { x: 70.19349850174376, y: -123.89277249647978, z: 0, m: NaN },
-              { x: 71.24297199541036, y: -125.01221088972409, z: 0, m: NaN },
-              { x: 73.2019891835879, y: -126.20161418254617, z: 0, m: NaN }
-            ]);
-            break;
-        }
-      }
-    });
-  });
+    polygon = geom.coords[1];
+    expect(polygon.length).toBe(1);
+    expectRing(polygon[0], [
+        { x: 4, y: -153, m: 1 },
+        { x: 2, y: -170, m: 2 },
+        { x: -22, y: -168, m: 3 },
+        { x: -27, y: -153, m: 4 },
+        { x: 4, y: -153, m: 1 },
+    ]);
+
+    polygon = geom.coords[2];
+    expect(polygon.length).toBe(4);
+    expectRing(polygon[0], [
+        { x: 21.36458464502732, y: -114.82376698718815, m: 8 },
+        { x: 23.511430161818396, y: -145.4651075450234, m: 9 },
+        { x: -33.47755992027015, y: -143.1230942539787, m: 10 },
+        { x: -29.76937220944933, y: -116.18994140696418, m: 11 },
+        { x: 21.36458464502732, y: -114.82376698718815, m: 8 },
+    ]);
+    expectRing(polygon[1], [
+        { x: -10.057427009822845, y: -140.1955776401727, m: 33 },
+        { x: -15.131789140419755, y: -131.4130277987549, m: 44 },
+        { x: -25.67084895012107, y: -123.60631682860594, m: 55 },
+        { x: -28.98870111243434, y: -138.43906767188923, m: 66 },
+        { x: -10.057427009822845, y: -140.1955776401727, m: 33 },
+    ]);
+    expectRing(polygon[2], [
+        { x: 8.953915923251884, y: -129.89172001995667, m: NaN },
+        { x: 4.580156059206786, y: -138.82940322039667, m: NaN },
+        { x: 15.314383643161705, y: -138.82940322039667, m: NaN },
+        { x: 9.264182641296316, y: -130.04685337897888, m: NaN },
+        { x: 8.953915923251884, y: -129.89172001995667, m: NaN },
+    ]);
+    expectRing(polygon[3], [
+        { x: -11.033265881091495, y: -120.87396798905371, m: 12 },
+        { x: -12.5946080751213, y: -130.24202115323266, m: 13 },
+        { x: 0.4816327998785255, y: -133.75504108979976, m: 14 },
+        { x: 0.8719683483859058, y: -121.8498068603223, m: 15 },
+        { x: -10.83809810683772, y: -120.87396798905371, m: 16 },
+        { x: -11.033265881091495, y: -120.87396798905371, m: 12 },
+    ]);
 });
-*/
+
+test('Reading PolygonRecord with Z', async () => {
+    const shpBuffer = openFileAsArray('testdata/polygonZM.shp');
+    const shxBuffer = openFileAsArray('testdata/polygonZM.shx');
+
+    const reader = await ShapeReader.fromArrayBuffer(shpBuffer, shxBuffer);
+    expect(reader.recordCount).toBe(2);
+
+    let geom = expectGeometry(reader, 0, CoordType.XYZM, PolygonRecord);
+    expect(geom.coords.length).toBe(1);
+
+    let polygon = geom.coords[0];
+    expect(polygon.length).toBe(1);
+    expectRing(polygon[0], [
+        { x: 32, y: -86, z: 10, m: 1 },
+        { x: 46, y: -86, z: 20, m: NaN },
+        { x: 50, y: -100, z: 30, m: 2 },
+        { x: 33, y: -101, z: 0, m: NaN },
+        { x: 32, y: -86, z: 10, m: 1 },
+    ]);
+
+    geom = expectGeometry(reader, 1, CoordType.XYZM, PolygonRecord);
+    expect(geom.coords.length).toBe(3); //testing only the first polygon bellow
+
+    polygon = geom.coords[0];
+    expect(polygon.length).toBe(4);
+
+    expectRing(polygon[0], [
+        { x: 84, y: -108, z: 0, m: 5 },
+        { x: 86, y: -124, z: 0, m: 6 },
+        { x: 72, y: -130, z: 0, m: 7 },
+        { x: 61, y: -120, z: 0, m: 8 },
+        { x: 67, y: -108, z: 0, m: 9 },
+        { x: 84, y: -108, z: 0, m: 5 },
+    ]);
+
+    expectRing(polygon[3], [
+        { x: 66.83518332201072, y: -116.61642294039177, z: 0, m: NaN },
+        { x: 72.99209448485459, y: -118.9252646264581, z: 0, m: NaN },
+        { x: 69.42388460638824, y: -111.64891507037015, z: 0, m: NaN },
+        { x: 66.83518332201072, y: -116.61642294039177, z: 0, m: NaN },
+    ]);
+
+    expectRing(polygon[2], [
+        { x: 75.51083086965417, y: -111.78884486952569, z: 0, m: NaN },
+        { x: 76.70023416247636, y: -118.43551032941377, z: 0, m: NaN },
+        { x: 82.78718042574235, y: -117.80582623321385, z: 0, m: NaN },
+        { x: 81.17798773545354, y: -111.71887996994786, z: 0, m: NaN },
+        { x: 75.51083086965417, y: -111.78884486952569, z: 0, m: NaN },
+    ]);
+
+    expectRing(polygon[1], [
+        { x: 73.2019891835879, y: -126.20161418254617, z: 0, m: NaN },
+        { x: 75.23097127134315, y: -126.34154398170176, z: 0, m: NaN },
+        { x: 77.18998845952069, y: -125.64189498592401, z: 0, m: NaN },
+        { x: 78.37939175234271, y: -124.66238639183524, z: 0, m: NaN },
+        { x: 78.51932155149831, y: -122.5634394045021, z: 0, m: NaN },
+        { x: 77.0500586603651, y: -120.81431691505787, z: 0, m: NaN },
+        { x: 74.3214275768322, y: -120.04470301970241, z: 0, m: NaN },
+        { x: 71.52283159372138, y: -120.60442221632462, z: 0, m: NaN },
+        { x: 70.40339320047707, y: -121.79382550914664, z: 0, m: NaN },
+        { x: 70.19349850174376, y: -123.89277249647978, z: 0, m: NaN },
+        { x: 71.24297199541036, y: -125.01221088972409, z: 0, m: NaN },
+        { x: 73.2019891835879, y: -126.20161418254617, z: 0, m: NaN },
+    ]);
+});

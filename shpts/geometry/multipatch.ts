@@ -41,29 +41,36 @@ export class MultiPatchRecord extends BaseRingedRecord {
     private static assemblePolygonsWithHoles(coords: Coord[][], partTypes: Int32Array) {
         const polygons: Coord[][][] = [];
         const openPolygon: Coord[][] = [];
+        let afterFirstRing = false;
 
         for (let i = 0; i < partTypes.length; i++) {
             if (partTypes[i] === 0) {
                 //triangle strip
                 MultiPatchRecord.closePolygon(openPolygon, polygons);
-                polygons.push(MultiPatchRecord.triangleStripToPolygon(coords[i]));
+                polygons.push(...MultiPatchRecord.triangleStripToPolygon(coords[i]));
+                afterFirstRing = false;
             } else if (partTypes[i] === 1) {
                 //triangle fan
                 MultiPatchRecord.closePolygon(openPolygon, polygons);
-                polygons.push(MultiPatchRecord.triangleFanToPolygon(coords[i]));
+                polygons.push(...MultiPatchRecord.triangleFanToPolygon(coords[i]));
+                afterFirstRing = false;
             } else if (partTypes[i] === 2) {
                 //outer ring
                 MultiPatchRecord.closePolygon(openPolygon, polygons);
                 openPolygon.push(coords[i]);
+                afterFirstRing = false;
             } else if (partTypes[i] === 3) {
                 //inner ring
                 openPolygon.push(coords[i]);
+                afterFirstRing = false;
             } else if (partTypes[i] === 4) {
                 //first ring
                 MultiPatchRecord.closePolygon(openPolygon, polygons);
                 openPolygon.push(coords[i]);
+                afterFirstRing = true;
             } else if (partTypes[i] === 5) {
                 //ring
+                if (!afterFirstRing) MultiPatchRecord.closePolygon(openPolygon, polygons);
                 openPolygon.push(coords[i]);
             } else {
                 throw new Error(`Invalid part type in MultiPatch: ${partTypes[i]}`);
@@ -83,10 +90,10 @@ export class MultiPatchRecord extends BaseRingedRecord {
 
     private static triangleStripToPolygon(coords: Coord[]) {
         const polygons = [];
-        let offsetFirst = 2;
-        let offsetSecond = 1;
+        let offsetFirst = 1;
+        let offsetSecond = 2;
         for (let i = 0; i < coords.length - 2; i++) {
-            polygons.push([coords[i], coords[i + offsetFirst], coords[i + offsetSecond]]);
+            polygons.push([[coords[i], coords[i + offsetFirst], coords[i + offsetSecond]]]);
             offsetFirst = offsetFirst === 1 ? 2 : 1;
             offsetSecond = offsetSecond === 1 ? 2 : 1;
         }
@@ -96,7 +103,7 @@ export class MultiPatchRecord extends BaseRingedRecord {
     private static triangleFanToPolygon(coords: Coord[]) {
         const polygons = [];
         for (let i = 1; i < coords.length - 1; i++) {
-            polygons.push([coords[0], coords[i], coords[i + 1]]);
+            polygons.push([[coords[0], coords[i], coords[i + 1]]]);
         }
         return polygons;
     }
