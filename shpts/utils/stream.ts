@@ -1,34 +1,34 @@
 export class MemoryStream {
-    private _dataView: DataView;
-    private _offset: number = 0;
-    private _size: number = 0;
+    private dataView: DataView;
+    private offset: number = 0;
+    private size: number = 0;
 
     get tell(): number {
-        return this._offset;
+        return this.offset;
     }
 
     constructor(buffer: ArrayBuffer) {
-        this._size = buffer.byteLength;
-        this._dataView = new DataView(buffer);
+        this.size = buffer.byteLength;
+        this.dataView = new DataView(buffer);
     }
 
     seek(offset: number): MemoryStream {
-        if (offset > this._size + 1) {
+        if (offset > this.size + 1) {
             throw new Error('Offset out of bounds');
         }
-        this._offset = offset;
+        this.offset = offset;
         return this;
     }
 
     readInt16(littleEndian?: boolean): number {
-        const result = this._dataView.getInt16(this._offset, littleEndian);
-        this._offset += 4;
+        const result = this.dataView.getInt16(this.offset, littleEndian);
+        this.offset += 4;
         return result;
     }
 
     readInt32(littleEndian?: boolean): number {
-        const result = this._dataView.getInt32(this._offset, littleEndian);
-        this._offset += 4;
+        const result = this.dataView.getInt32(this.offset, littleEndian);
+        this.offset += 4;
         return result;
     }
 
@@ -41,8 +41,8 @@ export class MemoryStream {
     }
 
     readDouble(littleEndian?: boolean): number {
-        const result = this._dataView.getFloat64(this._offset, littleEndian);
-        this._offset += 8;
+        const result = this.dataView.getFloat64(this.offset, littleEndian);
+        this.offset += 8;
         return result;
     }
 
@@ -56,12 +56,12 @@ export class MemoryStream {
 
     /* Returns value at curent pos without advancing */
     peekByte(): number {
-        return this._dataView.getUint8(this._offset);
+        return this.dataView.getUint8(this.offset);
     }
 
     readByte(): number {
-        const result = this._dataView.getUint8(this._offset);
-        this._offset += 1;
+        const result = this.dataView.getUint8(this.offset);
+        this.offset += 1;
         return result;
     }
 }

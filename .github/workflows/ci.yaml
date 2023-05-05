@@ -1,0 +1,66 @@
+name: SHPts CI
+
+on:
+    push:
+        branches: [release, dev]
+    pull_request:
+        branches: [dev]
+
+jobs:
+    build-and-test:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+            - name: 'Setup Node.js'
+              uses: 'actions/setup-node@v1'
+              with:
+                  node-version: 18
+            - name: Install dependencies
+              run: |
+                  npm i
+            - name: Build library
+              run: |
+                  npm run build
+            - name: Test library
+              run: |
+                  npm run test
+
+    tag-and-release:
+        runs-on: ubuntu-latest
+        if: github.event_name == 'push' && contains(github.ref, 'release')
+        needs: build-and-test
+        steps:
+            - uses: actions/checkout@v2
+            - name: 'Setup Node.js'
+              uses: actions/setup-node@v3
+              with:
+                  registry-url: https://registry.npmjs.org/
+                  node-version: 18
+            - name: Install dependencies
+              run: |
+                  npm i
+            - name: 'Get release version'
+              run: |
+                  CURRENT_VERSION=$(node -p "require('./package.json').version") 
+                  echo "Current version: $CURRENT_VERSION"
+                  echo "CURRENT_VERSION=v$CURRENT_VERSION" >> $GITHUB_ENV
+            - name: Build library
+              run: |
+                  npm run build
+            - name: Create Release ZIP file
+              run: |
+                  zip -r shpts.zip dist
+            - uses: rickstaa/action-create-tag@v1
+              with:
+                  tag: ${{ env.CURRENT_VERSION }}
+            - uses: ncipollo/release-action@v1
+              with:
+                  artifacts: 'shpts.zip'
+                  token: ${{ secrets.GITHUB_TOKEN }}
+                  generateReleaseNotes: true
+                  tag: ${{ env.CURRENT_VERSION }}
+            - name: Publish to NPM
+              run: |
+                  npm publish
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

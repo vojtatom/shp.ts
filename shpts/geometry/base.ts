@@ -1,4 +1,3 @@
-import { ShapeReader } from '@shpts/reader/reader';
 import { Coord, CoordType } from '@shpts/types/coordinate';
 import { GeoJsonGeom } from '@shpts/types/geojson';
 import { BoundingBox } from '@shpts/types/data';

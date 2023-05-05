@@ -1,4 +1,4 @@
-import { ShapeReader } from '@shpts/reader/reader';
+import { ShapeReader } from '@shpts/reader/shpReader';
 import { CoordType, PolygonCoord } from '@shpts/types/coordinate';
 import { BaseRingedRecord } from './base';
 import {

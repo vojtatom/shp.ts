@@ -1,4 +1,4 @@
-import { ShapeReader } from '@shpts/reader/reader';
+import { ShapeReader } from '@shpts/reader/shpReader';
 import { CoordType, MultiPointCoord } from '@shpts/types/coordinate';
 import { BaseRecord } from './base';
 import { GeoJsonCoord, GeoJsonMultiPoint } from '@shpts/types/geojson';

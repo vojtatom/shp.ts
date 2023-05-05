@@ -9,45 +9,25 @@ import { MemoryStream } from '@shpts/utils/stream';
 import { MultiPatchRecord } from '@shpts/geometry/multipatch';
 
 export class ShapeReader {
-    private shxStream_: MemoryStream;
-    private shpStream_: MemoryStream;
-    private shxHeader_: ShpHeader;
-    private shpHeader_: ShpHeader;
+    private shxStream: MemoryStream;
+    private shxHeader: ShpHeader;
+    readonly shpHeader: ShpHeader;
+    readonly shpStream: MemoryStream;
 
     readonly recordCount: number = 0;
     readonly hasZ: boolean;
     readonly hasM: boolean;
 
-    get extent(): BoundingBox {
-        return this.shpHeader_.extent;
-    }
-
-    get shapeType(): ShapeType {
-        return this.shpHeader_.type;
-    }
-
-    get shpHeader(): ShpHeader {
-        return this.shpHeader_;
-    }
-
-    get shpStream() {
-        return this.shpStream_;
-    }
-
-    get shxStream() {
-        return this.shxStream_;
-    }
-
     private constructor(shp: ArrayBuffer, shx: ArrayBuffer) {
-        this.shpStream_ = new MemoryStream(shp);
-        this.shpHeader_ = this.readHeader(this.shpStream_);
-        this.shxStream_ = new MemoryStream(shx);
-        this.shxHeader_ = this.readHeader(this.shxStream_);
+        this.shpStream = new MemoryStream(shp);
+        this.shpHeader = this.readHeader(this.shpStream);
+        this.shxStream = new MemoryStream(shx);
+        this.shxHeader = this.readHeader(this.shxStream);
 
-        if (this.shpHeader_.type !== this.shxHeader_.type)
+        if (this.shpHeader.type !== this.shxHeader.type)
             throw new Error('SHP / SHX shapetype mismatch');
 
-        this.recordCount = (this.shxHeader_.fileLength - 100) / 8;
+        this.recordCount = (this.shxHeader.fileLength - 100) / 8;
         this.hasZ = GeomUtil.hasZ(this.shpHeader.type);
         this.hasM = GeomUtil.hasM(this.shpHeader.type);
     }
@@ -82,9 +62,9 @@ export class ShapeReader {
     }
 
     private readGeomHeader(): GeomHeader {
-        const recNum = this.shpStream_.readInt32(false);
-        const len = this.shpStream_.readInt32(false);
-        const type: ShapeType = this.shpStream_.readInt32(true) as ShapeType;
+        const recNum = this.shpStream.readInt32(false);
+        const len = this.shpStream.readInt32(false);
+        const type: ShapeType = this.shpStream.readInt32(true) as ShapeType;
         return {
             length: len,
             recordNum: recNum,
@@ -107,13 +87,13 @@ export class ShapeReader {
 
     private getShpIndex(index: number): number {
         const offs = index * 8 + 100;
-        const shpOffset = this.shxStream_.seek(offs).readInt32(false) * 2;
+        const shpOffset = this.shxStream.seek(offs).readInt32(false) * 2;
         return shpOffset;
     }
 
     readGeom(geomIndex: number) {
         const offset = this.getShpIndex(geomIndex);
-        this.shpStream_.seek(offset);
+        this.shpStream.seek(offset);
         const recHead = this.readGeomHeader();
 
         this.checkForNull(recHead);

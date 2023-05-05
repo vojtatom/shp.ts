@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest';
-import { ShapeReader } from '@shpts/reader/reader';
+import { ShapeReader } from '@shpts/reader/shpReader';
 import { expectGeometry, expectPointsEqual, openFileAsArray } from './utils';
 import { PolyLineRecord } from '@shpts/geometry/polyline';
 import { CoordType } from '@shpts/types/coordinate';
