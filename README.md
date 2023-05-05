@@ -9,6 +9,12 @@ TypeScript package for loading Esri Shapefiles.
 -   ✅ supports X, Y, Z, and M coordinates
 -   ✅ uses vitest 🧪 for testing
 
+## Install from [npm](https://www.npmjs.com/package/shpts)
+
+```
+npm install shpts
+```
+
 ## Usage
 
 ```typescript
