@@ -9,17 +9,22 @@ import { PointRecord } from './geometry/point';
 import { MultiPointRecord } from './geometry/multipoint';
 import { MultiPatchRecord } from './geometry/multipatch';
 import { DbfRecord } from './table/record';
+import { DbfFieldDescr, DbfFieldType } from './types/dbfTypes';
+import { Coord, CoordType } from './types/coordinate';
 
 export {
     DbfReader,
     DbfRecord,
     ShapeReader,
-    FeatureCollection as ShapeFeatureCollection,
-    Feature as ShapeFeature,
-    FeatureReader as ShapeFeatureReader,
+    FeatureCollection,
+    Feature,
+    FeatureReader,
     PolygonRecord,
     PolyLineRecord,
     PointRecord,
     MultiPointRecord,
     MultiPatchRecord,
+    CoordType,
 };
+
+export type { DbfFieldType, DbfFieldDescr, Coord };

@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest';
-import { CoordType, Coord } from '@shpts/types/coordinate';
+import { Coord } from '@shpts/types/coordinate';
 import { assemblePolygonsWithHoles } from '@shpts/utils/orientation';
 
 test('Testing orientiton for vertical polygons', async () => {

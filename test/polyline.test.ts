@@ -1,8 +1,6 @@
 import { expect, test } from 'vitest';
-import { ShapeReader } from '@shpts/reader/shpReader';
 import { expectGeometry, expectPointsEqual, openFileAsArray } from './utils';
-import { PolyLineRecord } from '@shpts/geometry/polyline';
-import { CoordType } from '@shpts/types/coordinate';
+import { ShapeReader, PolyLineRecord, CoordType } from '@shpts/shpts';
 
 test('Reading PolyLineRecord', async () => {
     const shpBuffer = openFileAsArray('testdata/polyline.shp');
