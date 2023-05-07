@@ -55,7 +55,7 @@ export class DbfRecord {
             }
             chars[i] = charCode;
         }
-        const value = decoder.decode(Buffer.from(chars));
+        const value = decoder.decode(chars);
         return value.trim();
     }
 
