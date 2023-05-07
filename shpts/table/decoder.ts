@@ -23,7 +23,7 @@ export class DbfDecoder {
         this.decoder = new TextDecoder(encoding);
     }
 
-    decode(str: Buffer) {
+    decode(str: Uint8Array) {
         return this.decoder.decode(str);
     }
 }
