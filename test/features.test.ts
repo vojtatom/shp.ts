@@ -1,6 +1,6 @@
 import { expect, test } from 'vitest';
 import { expectPointsEqual, openFileAsArray } from './utils';
-import { FeatureReader, PolyLineRecord } from '@shpts/shpts';
+import { Feature, FeatureReader, PolyLineRecord } from '@shpts/shpts';
 
 test('Read feature OK', async () => {
     const shp = openFileAsArray('testdata/featureclass.shp');
@@ -13,7 +13,8 @@ test('Read feature OK', async () => {
     expect(reader.fields?.at(0)?.name).toEqual('Id');
     expect(reader.fields?.at(1)?.name).toEqual('name');
 
-    const feature = reader.readFeature(1);
+    const feature = reader.readFeature(1) as Feature;
+    expect(feature).not.toBeNull();
     expect(feature.geom).not.toBeNull();
     expect(feature.properties).not.toBeNull();
 
