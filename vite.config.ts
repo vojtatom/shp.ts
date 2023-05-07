@@ -1,7 +1,6 @@
 import { defineConfig } from 'vite';
 import { resolve } from 'path';
 import dts from 'vite-plugin-dts';
-import polyfillNode from 'rollup-plugin-polyfill-node';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -18,5 +17,5 @@ export default defineConfig({
             '@shpts': resolve(__dirname, './shpts'),
         },
     },
-    plugins: [dts(), polyfillNode()],
+    plugins: [dts()],
 });
