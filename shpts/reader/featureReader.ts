@@ -56,6 +56,8 @@ export class FeatureReader {
         let attrs = [];
         if (this.dbfReader != null) attrs = this.dbfReader.readRecord(index);
 
+        if (geom == null) return null;
+
         return new Feature(geom, attrs, this.dbfReader?.fields);
     }
 
@@ -63,7 +65,7 @@ export class FeatureReader {
         const collection = new FeatureCollection();
         for (let i = 0; i < this.featureCount; i++) {
             const feature = this.readFeature(i);
-            collection.features.push(feature);
+            if (feature != null) collection.features.push(feature);
         }
         return collection;
     }

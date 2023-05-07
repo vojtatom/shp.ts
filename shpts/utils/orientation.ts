@@ -56,7 +56,7 @@ export function assemblePolygonsWithHoles(coords: Coord[][]) {
     }
 
     if (unusedHoldes.length) {
-        console.warn('Some holes are not in any polygon, inserting as individual polygons.');
+        //console.warn('Some holes are not in any polygon, inserting as individual polygons.');
         polygons.push(...unusedHoldes.map((ring) => [ring]));
     }
 

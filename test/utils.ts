@@ -45,6 +45,7 @@ export function expectGeometry<TRecord>(
 ): TRecord {
     let geom = reader.readGeom(index);
     expect(geom).toBeDefined();
+    if (!geom) throw new Error('geom is undefined');
     expect(geom.coordType).toBe(coordType);
     expect(geom instanceof type).toBe(true);
     return geom as TRecord;
