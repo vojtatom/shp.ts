@@ -48,7 +48,7 @@ shp.ts uses the following third-party code:
 > OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 > SOFTWARE.
 
-### [mapbox earcut](https://github.com/mapbox/earcut)
+### [mapbox earcut](https://github.com/mapbox/earcut)
 
 > ISC License
 >
