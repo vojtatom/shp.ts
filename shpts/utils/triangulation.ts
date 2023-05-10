@@ -3,8 +3,7 @@ import { earcut } from './mapbox/earcut';
 import { vec3, vec2 } from 'gl-matrix';
 
 //find a normal Newell's method
-function normal(points: number[]) {
-    const dim = 3;
+function normal(points: number[], dim: number) {
     const normal: vec3 = [0, 0, 0];
     const n = points.length;
     let p1x, p1y, p1z, p2x, p2y, p2z, p1, p2;
@@ -26,8 +25,7 @@ function normal(points: number[]) {
     return normal;
 }
 
-function centroid(points: number[]) {
-    const dim = 3;
+function centroid(points: number[], dim: number) {
     const n = points.length;
     let x = 0,
         y = 0,
@@ -71,13 +69,19 @@ function projectTo2D(x: number, y: number, z: number, origin: vec3, basis: [vec3
     return [vec3.dot(u, w), vec3.dot(v, w)] as vec2;
 }
 
+function isDegenerate(normal: vec3) {
+    return isNaN(vec3.length(normal)) || vec3.length(normal) < 1e-10;
+}
+
 function project(points: number[], type: CoordType) {
-    //TODO adjust to ignore M
-    const dim = type === CoordType.XYZM ? 3 : 2;
+    const dim = type === CoordType.XYZM ? 4 : type === CoordType.XY ? 2 : 3;
+
     if (dim === 2) return points;
 
-    const normalVector = normal(points);
-    const centroidVector = centroid(points);
+    const normalVector = normal(points, dim);
+    if (isDegenerate(normalVector)) return [];
+
+    const centroidVector = centroid(points, dim);
     const basis = find2DBasis(normalVector);
 
     const projected: number[] = [];
@@ -89,25 +93,34 @@ function project(points: number[], type: CoordType) {
     return projected;
 }
 
-export function triangulate(rings: Ring[], type: CoordType) {
+// Triangulate a polygon
+// Expects a polygon as an array of rings, where each ring is an array of points, where each point is an array of numbers
+// Returns an array of vertices organized as triangles
+// The first and last point of each ring has to be the same
+export function triangulate(rings: Ring[], type: CoordType, ignoreM = false) {
     const coordinates: number[] = [];
     const holeIndices: number[] = [];
-    const dim = type === CoordType.XYZM ? 3 : 2;
+    const dim = type === CoordType.XYZM ? 4 : type === CoordType.XY ? 2 : 3;
 
     rings.forEach((ring, index) => {
         if (index > 0) holeIndices.push(coordinates.length / dim);
-        ring.forEach((coord) => {
-            coordinates.push(...coord.slice(0, dim));
+        ring.forEach((coord, index) => {
+            if (index === ring.length - 1) return;
+            coordinates.push(...coord.slice());
         });
     });
 
     const projected = project(coordinates, type);
+    if (projected.length === 0) return new Float32Array([]); //handle degenerate case
     const indices = earcut(projected, holeIndices, 2);
 
-    const vertices = new Float32Array(indices.length * dim);
+    let dimLoc = dim;
+    if (ignoreM) dimLoc = Math.min(dim, 3);
+
+    const vertices = new Float32Array(indices.length * dimLoc);
     for (let i = 0; i < indices.length; i++) {
         const index = indices[i];
-        for (let j = 0; j < dim; j++) vertices[i * dim + j] = coordinates[index * dim + j];
+        for (let j = 0; j < dimLoc; j++) vertices[i * dimLoc + j] = coordinates[index * dim + j];
     }
     return vertices;
 }

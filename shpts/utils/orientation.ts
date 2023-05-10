@@ -1,7 +1,5 @@
 import { Coord, PolygonCoord, Ring } from '@shpts/types/coordinate';
 
-//TODO first and last points are the same, is it in the code?
-
 export function isClockwise(ring: Ring) {
     if (ring.length < 3) return false; //is hole if degenerate ring
     let area = ring[ring.length - 1][1] * ring[0][0] - ring[ring.length - 1][0] * ring[0][1];
