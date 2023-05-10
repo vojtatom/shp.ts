@@ -241,3 +241,11 @@ test('Reading PolygonRecord with Z', async () => {
         { x: 73.2019891835879, y: -126.20161418254617, z: 0, m: NaN },
     ]);
 });
+
+test('Reading PolygonZ Terrain Example', async () => {
+    const shpBuffer = openFileAsArray('testdata/terrain/ter.shp');
+    const shxBuffer = openFileAsArray('testdata/terrain/ter.shx');
+
+    const reader = await ShapeReader.fromArrayBuffer(shpBuffer, shxBuffer);
+    expect(reader.recordCount).toBe(42798);
+});

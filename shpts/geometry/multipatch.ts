@@ -93,7 +93,9 @@ export class MultiPatchRecord extends BaseRingedRecord {
         let offsetFirst = 1;
         let offsetSecond = 2;
         for (let i = 0; i < coords.length - 2; i++) {
-            polygons.push([[coords[i], coords[i + offsetFirst], coords[i + offsetSecond]]]);
+            polygons.push([
+                [coords[i], coords[i + offsetFirst], coords[i + offsetSecond], coords[i]],
+            ]);
             offsetFirst = offsetFirst === 1 ? 2 : 1;
             offsetSecond = offsetSecond === 1 ? 2 : 1;
         }
@@ -103,7 +105,7 @@ export class MultiPatchRecord extends BaseRingedRecord {
     private static triangleFanToPolygon(coords: Coord[]) {
         const polygons = [];
         for (let i = 1; i < coords.length - 1; i++) {
-            polygons.push([[coords[0], coords[i], coords[i + 1]]]);
+            polygons.push([[coords[0], coords[i], coords[i + 1], coords[0]]]);
         }
         return polygons;
     }

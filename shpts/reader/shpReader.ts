@@ -92,6 +92,14 @@ export class ShapeReader {
     }
 
     readGeom(geomIndex: number) {
+        try {
+            return this.readGeometryData(geomIndex);
+        } catch (e: any) {
+            return null;
+        }
+    }
+
+    private readGeometryData(geomIndex: number) {
         const offset = this.getShpIndex(geomIndex);
         this.shpStream.seek(offset);
         const recHead = this.readGeomHeader();

@@ -16,6 +16,7 @@ test('Reading MultiPatchRecord with Z', async () => {
         { x: 0, y: 0, z: 0, m: NaN },
         { x: 0, y: 0, z: 3, m: NaN },
         { x: 5, y: 0, z: 0, m: NaN },
+        { x: 0, y: 0, z: 0, m: NaN },
     ]);
 
     polygon = geom.coords[1];
@@ -23,6 +24,7 @@ test('Reading MultiPatchRecord with Z', async () => {
         { x: 0, y: 0, z: 3, m: NaN },
         { x: 5, y: 0, z: 3, m: NaN },
         { x: 5, y: 0, z: 0, m: NaN },
+        { x: 0, y: 0, z: 3, m: NaN },
     ]);
 
     polygon = geom.coords[2];
@@ -30,6 +32,7 @@ test('Reading MultiPatchRecord with Z', async () => {
         { x: 5, y: 0, z: 0, m: NaN },
         { x: 5, y: 0, z: 3, m: NaN },
         { x: 5, y: 5, z: 0, m: NaN },
+        { x: 5, y: 0, z: 0, m: NaN },
     ]);
 
     polygon = geom.coords[3];
@@ -37,6 +40,7 @@ test('Reading MultiPatchRecord with Z', async () => {
         { x: 5, y: 0, z: 3, m: NaN },
         { x: 5, y: 5, z: 3, m: NaN },
         { x: 5, y: 5, z: 0, m: NaN },
+        { x: 5, y: 0, z: 3, m: NaN },
     ]);
 
     polygon = geom.coords[4];
@@ -44,6 +48,7 @@ test('Reading MultiPatchRecord with Z', async () => {
         { x: 5, y: 5, z: 0, m: NaN },
         { x: 5, y: 5, z: 3, m: NaN },
         { x: 0, y: 5, z: 0, m: NaN },
+        { x: 5, y: 5, z: 0, m: NaN },
     ]);
 
     polygon = geom.coords[5];
@@ -51,6 +56,7 @@ test('Reading MultiPatchRecord with Z', async () => {
         { x: 5, y: 5, z: 3, m: NaN },
         { x: 0, y: 5, z: 3, m: NaN },
         { x: 0, y: 5, z: 0, m: NaN },
+        { x: 5, y: 5, z: 3, m: NaN },
     ]);
 
     polygon = geom.coords[6];
@@ -58,6 +64,7 @@ test('Reading MultiPatchRecord with Z', async () => {
         { x: 0, y: 5, z: 0, m: NaN },
         { x: 0, y: 5, z: 3, m: NaN },
         { x: 0, y: 0, z: 0, m: NaN },
+        { x: 0, y: 5, z: 0, m: NaN },
     ]);
 
     polygon = geom.coords[7];
@@ -65,6 +72,7 @@ test('Reading MultiPatchRecord with Z', async () => {
         { x: 0, y: 5, z: 3, m: NaN },
         { x: 0, y: 0, z: 3, m: NaN },
         { x: 0, y: 0, z: 0, m: NaN },
+        { x: 0, y: 5, z: 3, m: NaN },
     ]);
 
     polygon = geom.coords[8];
@@ -72,6 +80,7 @@ test('Reading MultiPatchRecord with Z', async () => {
         { x: 2.5, y: 2.5, z: 5, m: NaN },
         { x: 0, y: 0, z: 3, m: NaN },
         { x: 5, y: 0, z: 3, m: NaN },
+        { x: 2.5, y: 2.5, z: 5, m: NaN },
     ]);
 
     polygon = geom.coords[9];
@@ -79,6 +88,7 @@ test('Reading MultiPatchRecord with Z', async () => {
         { x: 2.5, y: 2.5, z: 5, m: NaN },
         { x: 5, y: 0, z: 3, m: NaN },
         { x: 5, y: 5, z: 3, m: NaN },
+        { x: 2.5, y: 2.5, z: 5, m: NaN },
     ]);
 
     polygon = geom.coords[10];
@@ -86,6 +96,7 @@ test('Reading MultiPatchRecord with Z', async () => {
         { x: 2.5, y: 2.5, z: 5, m: NaN },
         { x: 5, y: 5, z: 3, m: NaN },
         { x: 0, y: 5, z: 3, m: NaN },
+        { x: 2.5, y: 2.5, z: 5, m: NaN },
     ]);
 
     polygon = geom.coords[11];
@@ -93,6 +104,7 @@ test('Reading MultiPatchRecord with Z', async () => {
         { x: 2.5, y: 2.5, z: 5, m: NaN },
         { x: 0, y: 5, z: 3, m: NaN },
         { x: 0, y: 0, z: 3, m: NaN },
+        { x: 2.5, y: 2.5, z: 5, m: NaN },
     ]);
 });
 
