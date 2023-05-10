@@ -9,6 +9,7 @@ test('Reading PolyLineRecord', async () => {
     const reader = await ShapeReader.fromArrayBuffer(shpBuffer, shxBuffer);
 
     let geom = expectGeometry(reader, 0, CoordType.XY, PolyLineRecord);
+    expect(geom.type).toEqual('LineString');
     expect(geom.coords.length).toBe(1);
     let segment = geom.coords[0];
     expect(segment.length).toBe(3);
@@ -17,9 +18,11 @@ test('Reading PolyLineRecord', async () => {
     expectPointsEqual(segment[2], [-146.82619944462766, -153.40391265875377]);
 
     geom = expectGeometry(reader, 1, CoordType.XY, PolyLineRecord);
+    expect(geom.type).toEqual('LineString');
     expect(geom.coords.length).toBe(1);
 
     geom = expectGeometry(reader, 2, CoordType.XY, PolyLineRecord);
+    expect(geom.type).toEqual('MultiLineString');
     expect(geom.coords.length).toBe(3);
     segment = geom.coords[0];
     expect(segment.length).toBe(4);
@@ -46,6 +49,7 @@ test('Reading PolyLineRecord with M', async () => {
     const reader = await ShapeReader.fromArrayBuffer(shpBuffer, shxBuffer);
 
     let geom = expectGeometry(reader, 0, CoordType.XYM, PolyLineRecord);
+    expect(geom.type).toEqual('LineString');
     expect(geom.coords.length).toBe(1);
     let segment = geom.coords[0];
     expect(segment.length).toBe(3);
@@ -54,6 +58,7 @@ test('Reading PolyLineRecord with M', async () => {
     expectPointsEqual(segment[2], [64.17836737175264, -110.86618752096422, 30]);
 
     geom = expectGeometry(reader, 1, CoordType.XYM, PolyLineRecord);
+    expect(geom.type).toEqual('LineString');
     expect(geom.coords.length).toBe(1);
     segment = geom.coords[0];
     expect(segment.length).toBe(5);
@@ -64,6 +69,7 @@ test('Reading PolyLineRecord with M', async () => {
     expectPointsEqual(segment[4], [75.77823977517522, -100.75347824618558, 5]);
 
     geom = expectGeometry(reader, 2, CoordType.XYM, PolyLineRecord);
+    expect(geom.type).toEqual('MultiLineString');
     expect(geom.coords.length).toBe(3);
     segment = geom.coords[0];
     expect(segment.length).toBe(3);
@@ -89,6 +95,7 @@ test('Reading PolyLineRecord with Z', async () => {
     const reader = await ShapeReader.fromArrayBuffer(shpBuffer, shxBuffer);
 
     let geom = expectGeometry(reader, 0, CoordType.XYZM, PolyLineRecord);
+    expect(geom.type).toEqual('LineString');
     expect(geom.coords.length).toBe(1);
     let segment = geom.coords[0];
     expectPointsEqual(segment[0], [-115.47093856843338, -100.45604562045679, 100, 5000]);
@@ -98,6 +105,7 @@ test('Reading PolyLineRecord with Z', async () => {
     expectPointsEqual(segment[4], [-29.215477107085803, -93.91252785442344, 104, 9000]);
 
     geom = expectGeometry(reader, 1, CoordType.XYZM, PolyLineRecord);
+    expect(geom.type).toEqual('LineString');
     expect(geom.coords.length).toBe(1);
     segment = geom.coords[0];
     expectPointsEqual(segment[0], [-112.79404493687429, -114.43537902970968, 1000, NaN]);
@@ -107,6 +115,7 @@ test('Reading PolyLineRecord with Z', async () => {
     expectPointsEqual(segment[4], [-23.861689843967667, -106.4046981350325, 1004, NaN]);
 
     geom = expectGeometry(reader, 2, CoordType.XYZM, PolyLineRecord);
+    expect(geom.type).toEqual('MultiLineString');
     expect(geom.coords.length).toBe(3);
     segment = geom.coords[0];
     expectPointsEqual(segment[0], [-111.60670519384564, -126.90578866647462, 11, 1]);

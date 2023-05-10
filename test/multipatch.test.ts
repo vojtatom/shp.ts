@@ -10,6 +10,7 @@ test('Reading MultiPatchRecord with Z', async () => {
 
     expect(reader.recordCount).toEqual(1);
     let geom = expectGeometry(reader, 0, CoordType.XYZM, MultiPatchRecord);
+    expect(geom.type).toEqual('MultiPolygon');
     expect(geom.coords.length).toEqual(12);
     let polygon = geom.coords[0];
     expectRing(polygon[0], [
@@ -116,6 +117,7 @@ test('Reading MultiPatchRecord with Outer/Inner Rings', async () => {
     expect(reader.recordCount).toEqual(1);
 
     let geom = expectGeometry(reader, 0, CoordType.XYZM, MultiPatchRecord);
+    expect(geom.type).toEqual('Polygon');
     expect(geom.coords.length).toBe(1);
     let polygon = geom.coords[0];
     expect(polygon.length).toBe(3);
@@ -150,6 +152,7 @@ test('Reading MultiPatchRecord with First Ring and Rings', async () => {
     expect(reader.recordCount).toEqual(1);
 
     let geom = expectGeometry(reader, 0, CoordType.XYZM, MultiPatchRecord);
+    expect(geom.type).toEqual('Polygon');
     expect(geom.coords.length).toBe(1);
     let polygon = geom.coords[0];
     expect(polygon.length).toBe(3);
@@ -184,6 +187,7 @@ test('Reading MultiPatchRecord with First Ring and Rings', async () => {
     expect(reader.recordCount).toEqual(1);
 
     let geom = expectGeometry(reader, 0, CoordType.XYZM, MultiPatchRecord);
+    expect(geom.type).toEqual('MultiPolygon');
     expect(geom.coords.length).toBe(3);
     let polygon = geom.coords[0];
     expect(polygon.length).toBe(1);

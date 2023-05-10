@@ -9,6 +9,7 @@ test('Reading PolygonRecord', async () => {
     const reader = await ShapeReader.fromArrayBuffer(shpBuffer, shxBuffer);
 
     let geom = expectGeometry(reader, 0, CoordType.XY, PolygonRecord);
+    expect(geom.type).toEqual('Polygon');
     expect(geom.coords.length).toBe(1);
     let polygon = geom.coords[0];
     expect(polygon.length).toBe(3);
@@ -38,6 +39,7 @@ test('Reading PolygonRecord', async () => {
     ]);
 
     geom = expectGeometry(reader, 1, CoordType.XY, PolygonRecord);
+    expect(geom.type).toEqual('Polygon');
     expect(geom.coords.length).toBe(1);
     polygon = geom.coords[0];
     expect(polygon.length).toBe(1);
@@ -50,6 +52,7 @@ test('Reading PolygonRecord', async () => {
     ]);
 
     geom = expectGeometry(reader, 2, CoordType.XY, PolygonRecord);
+    expect(geom.type).toEqual('MultiPolygon');
     expect(geom.coords.length).toBe(3);
     polygon = geom.coords[0];
     expect(polygon.length).toBe(3);
@@ -111,6 +114,7 @@ test('Reading PolygonRecord with M', async () => {
     expect(reader.recordCount).toBe(2);
 
     let geom = expectGeometry(reader, 0, CoordType.XYM, PolygonRecord);
+    expect(geom.type).toEqual('Polygon');
     expect(geom.coords.length).toBe(1);
     let polygon = geom.coords[0];
     expect(polygon.length).toBe(1);
@@ -122,6 +126,7 @@ test('Reading PolygonRecord with M', async () => {
     ]);
 
     geom = expectGeometry(reader, 1, CoordType.XYM, PolygonRecord);
+    expect(geom.type).toEqual('MultiPolygon');
     expect(geom.coords.length).toBe(3);
 
     polygon = geom.coords[0];
@@ -184,6 +189,7 @@ test('Reading PolygonRecord with Z', async () => {
     expect(reader.recordCount).toBe(2);
 
     let geom = expectGeometry(reader, 0, CoordType.XYZM, PolygonRecord);
+    expect(geom.type).toEqual('Polygon');
     expect(geom.coords.length).toBe(1);
 
     let polygon = geom.coords[0];
@@ -197,6 +203,7 @@ test('Reading PolygonRecord with Z', async () => {
     ]);
 
     geom = expectGeometry(reader, 1, CoordType.XYZM, PolygonRecord);
+    expect(geom.type).toEqual('MultiPolygon');
     expect(geom.coords.length).toBe(3); //testing only the first polygon bellow
 
     polygon = geom.coords[0];
