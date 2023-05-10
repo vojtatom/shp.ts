@@ -7,6 +7,10 @@ export class ShpNullGeom extends BaseRecord {
         super(CoordType.NULL);
     }
 
+    get type() {
+        return 'Null';
+    }
+
     public toGeoJson(): GeoJsonGeom {
         throw new Error('Method cannot be implemented.');
     }

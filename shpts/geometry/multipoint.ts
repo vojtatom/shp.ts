@@ -11,6 +11,10 @@ export class MultiPointRecord extends BaseRecord {
         super(coordType);
     }
 
+    get type() {
+        return 'MultiPoint';
+    }
+
     static fromPresetReader(reader: ShapeReader, header: GeomHeader) {
         const hasZ = reader.hasZ;
         const hasM = reader.hasM;
