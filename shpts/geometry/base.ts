@@ -21,6 +21,8 @@ export abstract class BaseRecord {
         return 4;
     }
 
+    abstract get type(): string;
+
     protected static readBbox(stream: MemoryStream): BoundingBox {
         const xMin = stream.readDouble(true);
         const yMin = stream.readDouble(true);

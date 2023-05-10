@@ -16,6 +16,11 @@ export class PolygonRecord extends BaseRingedRecord {
         super(coordType);
     }
 
+    get type() {
+        if (this.coords.length === 1) return 'Polygon';
+        return 'MultiPolygon';
+    }
+
     static fromPresetReader(reader: ShapeReader, header: GeomHeader) {
         const hasZ = reader.hasZ;
         const hasM = reader.hasM;

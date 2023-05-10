@@ -10,6 +10,10 @@ export class PointRecord extends BaseRecord {
         super(coordType);
     }
 
+    get type() {
+        return 'Point';
+    }
+
     static fromPresetReader(reader: ShapeReader, header: GeomHeader) {
         const hasZ = reader.hasZ;
         const hasM = reader.hasM;

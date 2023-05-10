@@ -9,6 +9,7 @@ test('Reading PointRecord', async () => {
     const reader = await ShapeReader.fromArrayBuffer(shpBuffer, shxBuffer);
 
     let geom = expectGeometry(reader, 0, CoordType.XY, MultiPointRecord);
+    expect(geom.type).toEqual('MultiPoint');
     expect(geom.coords.length).toBe(5);
     expectPointsEqual(geom.coords[0], [36.963112042621276, -129.36489649456098]);
     expectPointsEqual(geom.coords[1], [37.148521428162326, -118.98197090426271]);
@@ -17,6 +18,7 @@ test('Reading PointRecord', async () => {
     expectPointsEqual(geom.coords[4], [48.273084560624625, -124.35884308495292]);
 
     geom = expectGeometry(reader, 1, CoordType.XY, MultiPointRecord);
+    expect(geom.type).toEqual('MultiPoint');
     expect(geom.coords.length).toBe(4);
     expectPointsEqual(geom.coords[0], [56.060278753348484, -131.96062789213556]);
     expectPointsEqual(geom.coords[1], [57.72896322321782, -136.41045314512053]);
@@ -24,6 +26,7 @@ test('Reading PointRecord', async () => {
     expectPointsEqual(geom.coords[3], [63.662063560531124, -131.21899034997142]);
 
     geom = expectGeometry(reader, 2, CoordType.XY, MultiPointRecord);
+    expect(geom.type).toEqual('MultiPoint');
     expect(geom.coords.length).toBe(3);
     expectPointsEqual(geom.coords[0], [44.564896849803915, -151.05779460286274]);
     expectPointsEqual(geom.coords[1], [47.71685640400153, -142.3435534824339]);
@@ -37,6 +40,7 @@ test('Reading PointRecord with M', async () => {
     const reader = await ShapeReader.fromArrayBuffer(shpBuffer, shxBuffer);
 
     let geom = expectGeometry(reader, 0, CoordType.XYM, MultiPointRecord);
+    expect(geom.type).toEqual('MultiPoint');
     expect(geom.coords.length).toBe(5);
     expectPointsEqual(geom.coords[0], [88.87773999411263, -137.89372822944887, 1]);
     expectPointsEqual(geom.coords[1], [92.95674647601561, -143.08519102459798, 2]);
@@ -45,12 +49,14 @@ test('Reading PointRecord with M', async () => {
     expectPointsEqual(geom.coords[4], [97.59198111454151, -141.41650655472864, 5]);
 
     geom = expectGeometry(reader, 1, CoordType.XYM, MultiPointRecord);
+    expect(geom.type).toEqual('MultiPoint');
     expect(geom.coords.length).toBe(3);
     expectPointsEqual(geom.coords[0], [96.10870603021323, -121.94852107291939, 44]);
     expectPointsEqual(geom.coords[1], [98.33361865670565, -127.32539325360949, 55]);
     expectPointsEqual(geom.coords[2], [101.11475943982134, -122.69015861508353, 66]);
 
     geom = expectGeometry(reader, 2, CoordType.XYM, MultiPointRecord);
+    expect(geom.type).toEqual('MultiPoint');
     expect(geom.coords.length).toBe(4);
     expectPointsEqual(geom.coords[0], [104.45212837956001, -133.2584935909228, 5]);
     expectPointsEqual(geom.coords[1], [106.86245039159343, -136.96668130174362, 55]);
@@ -65,6 +71,7 @@ test('Reading PointRecord with Z', async () => {
     const reader = await ShapeReader.fromArrayBuffer(shpBuffer, shxBuffer);
 
     let geom = expectGeometry(reader, 0, CoordType.XYZM, MultiPointRecord);
+    expect(geom.type).toEqual('MultiPoint');
     expect(geom.coords.length).toBe(6);
     expectPointsEqual(geom.coords[0], [106.12081284942929, -160.14285449437375, 0, NaN]);
     expectPointsEqual(geom.coords[1], [106.86245039159343, -155.32221047030666, 0, NaN]);
@@ -74,10 +81,12 @@ test('Reading PointRecord with Z', async () => {
     expectPointsEqual(geom.coords[5], [114.09341642769414, -160.3282638799148, 0, NaN]);
 
     geom = expectGeometry(reader, 1, CoordType.XYZM, MultiPointRecord);
+    expect(geom.type).toEqual('MultiPoint');
     expect(geom.coords.length).toBe(1);
     expectPointsEqual(geom.coords[0], [110.01440994579121, -149.57451951853437, -10, -10]);
 
     geom = expectGeometry(reader, 2, CoordType.XYZM, MultiPointRecord);
+    expect(geom.type).toEqual('MultiPoint');
     expect(geom.coords.length).toBe(3);
     expectPointsEqual(geom.coords[0], [89.06314937965368, -154.02434477151942, 22, -10]);
     expectPointsEqual(geom.coords[1], [91.8442901627692, -161.81153896424308, 33, -20]);

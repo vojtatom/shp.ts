@@ -4,11 +4,15 @@ import { BaseRingedRecord } from './base';
 import { GeoJsonCoord, GeoJsonLineString, GeoJsonMultiLineString } from '@shpts/types/geojson';
 import { GeomUtil } from '@shpts/utils/geometry';
 import { GeomHeader } from '@shpts/types/data';
-import { MemoryStream } from '@shpts/utils/stream';
 
 export class PolyLineRecord extends BaseRingedRecord {
     constructor(public coords: PolyLineCoord, coordType: CoordType) {
         super(coordType);
+    }
+
+    get type() {
+        if (this.coords.length === 1) return 'LineString';
+        return 'MultiLineString';
     }
 
     static fromPresetReader(reader: ShapeReader, header: GeomHeader) {
