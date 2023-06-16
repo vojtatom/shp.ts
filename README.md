@@ -1,4 +1,4 @@
-# SHP.ts 🗺️
+# shp.ts 🗺️
 
 TypeScript package for loading Esri Shapefiles, primary developed for for WebGL applications
 
